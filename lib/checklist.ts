@@ -377,6 +377,12 @@ This MUST be done before data migration if you use tools.
 
 ## Phase 5: Data Migration (Runtime Conversion)
 
+**🚨 CRITICAL: DO NOT SKIP THIS PHASE 🚨**
+
+**Even if you are ALREADY using \`message.parts\` in v4, you MUST complete this phase!**
+
+The structure of \`message.parts\` has changed between v4 and v5. Just because you stored messages using the \`parts\` array in v4 doesn't mean they're v5-compatible. **You still need to convert them.**
+
 ### 5.1 Understanding the Problem
 
 The v5 message structure is fundamentally different from v4:
@@ -386,6 +392,9 @@ The v5 message structure is fundamentally different from v4:
 - **Tool fields**: \`args\`/\`result\` → \`input\`/\`output\`
 - **Reasoning**: \`{ reasoning: "..." }\` → \`{ text: "..." }\`
 - **File parts**: \`data\`/\`mimeType\` → \`url\`/\`mediaType\`
+- **Source parts**: Nested \`source\` object → Flat structure with direct properties
+
+**⚠️ IMPORTANT:** Even if your database already stores \`message.parts\` from v4, the internal structure of those parts has changed in v5. The conversion functions handle ALL of these transformations.
 
 **Without conversion, stored v4 messages will break your application.**
 
@@ -1625,6 +1634,8 @@ Database schema migrations are too critical and risky for AI automation. A mista
    - Keep migration scripts until verified in production
 
 This phase removes the temporary runtime conversion layer after you've manually migrated your database to v5 schema.
+
+> Note: even if you are already storing message.parts with v4, you still need to migrate your schema as message.parts have changed in v5.
 
 ### 8.1 Remove Runtime Conversion Layer
 - [ ] **ACTION**: Search for conversion function files:
