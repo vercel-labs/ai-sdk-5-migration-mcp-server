@@ -1,6 +1,6 @@
 # AI SDK 5 Migration MCP Server
 
-An MCP server that helps you migrate from AI SDK 4.x to 5.0 in one shot.
+An MCP server that helps you migrate from AI SDK 4.x to 5.0. This server has been designed to work with Cursor, but should work with any compatible MCP client.
 
 ## Quick Start
 
@@ -29,9 +29,9 @@ Open your project in Cursor and use this prompt:
 Please migrate this project to AI SDK 5 using the ai-sdk-5-migration mcp server. Start by creating a checklist.
 ```
 
-This one-shot prompt will:
+This prompt will:
 1. Create a comprehensive migration checklist (`AI_SDK_5_MIGRATION.md`)
-2. Guide you through all migration steps systematically
+2. Guide the agent through all migration steps systematically
 3. Search the official migration guides when needed for specific changes
 
 > **Note:** This has been tested with Cursor's auto model setting
@@ -46,7 +46,7 @@ This server provides three MCP tools:
 
 3. **`search-data-guide`** - Searches the data migration guide for database and persistence information (converting stored messages, dual-write patterns, schema changes).
 
-The AI agent uses these tools automatically when you run the one-shot prompt above.
+The agent uses these tools automatically when you run the prompt above.
 
 ## Local Development
 
