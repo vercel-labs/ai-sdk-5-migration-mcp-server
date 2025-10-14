@@ -5,7 +5,7 @@
 export function generateChecklist(): string {
   const baseUrl = process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
-    : 'http://localhost:3000';
+    : "http://localhost:3000";
   const conversionFunctionsUrl = `${baseUrl}/api/conversion-functions`;
 
   return `# AI SDK 5 Migration Checklist
@@ -42,11 +42,19 @@ This checklist will guide you through migrating from AI SDK 4.x to 5.0. Check of
 
 **AI Agent: YOU must perform these actions, not just check them off!**
 
-### 1.1 Check Git Status
+### 1.1 Check Git Status & Create Branch
+
+When you generate this migration checklist, you must IMMEDIATELY:
+1. ✅ **RUN** \`git checkout -b ai-sdk-5-migration\`
+2. ✅ **RUN** \`git add AI_SDK_5_MIGRATION.md\`
+3. ✅ **RUN** \`git commit -m "Add migration checklist"\`
+
+---
+
 - [ ] **ACTION**: Run \`git status\` to check for uncommitted changes
 - [ ] **ACTION**: If there are uncommitted changes, commit them with \`git commit -am "Pre-migration checkpoint"\`
-- [ ] **ACTION**: Create migration branch: \`git checkout -b ai-sdk-5-migration\`
-- [ ] **ACTION**: Commit migration guide: \`git add AI_SDK_5_MIGRATION.md && git commit -m "Add migration checklist"\`
+- [ ] **ACTION**: 🔴 **CRITICAL** 🔴 Create migration branch: \`git checkout -b ai-sdk-5-migration\`
+- [ ] **ACTION**: 🔴 **CRITICAL** 🔴 Commit migration guide: \`git add AI_SDK_5_MIGRATION.md && git commit -m "Add migration checklist"\`
 - [ ] **ACTION**: Verify clean working directory with \`git status\`
 
 ### 1.2 Review Current Setup
@@ -1692,7 +1700,6 @@ Use the MCP tools to search for specific information:
 ---
 
 **Status:** In Progress
-**Last Updated:** ${new Date().toISOString().split('T')[0]}
+**Last Updated:** ${new Date().toISOString().split("T")[0]}
 `;
 }
-
