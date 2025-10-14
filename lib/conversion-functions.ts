@@ -4,9 +4,9 @@ export const generateConversionFunctions = () => {
     Message as V4Message,
     UIMessage as LegacyUIMessage,
   } from 'ai-legacy';
-  import type { ToolUIPart, UIMessage, UITools } from 'ai';
+  import type { JSONValue, ToolUIPart, UIMessage, UITools } from 'ai';
 
-  export type MyUIMessage = UIMessage<unknown, { custom: any }, UITools>;
+  export type MyUIMessage = UIMessage<never, { custom: JSONValue }, UITools>;
 
   type V4Part = NonNullable<V4Message['parts']>[number];
   type V5Part = MyUIMessage['parts'][number];
@@ -312,5 +312,5 @@ export const generateConversionFunctions = () => {
     }
     return base;
   }
-`
-}
+`;
+};

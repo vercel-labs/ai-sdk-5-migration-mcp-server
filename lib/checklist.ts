@@ -213,6 +213,8 @@ curl -s "${conversionFunctionsUrl}" -o lib/convert-messages.ts
 
 **⚠️ YOU MUST CONVERT WHEN READING AND WHEN WRITING ⚠️**
 
+**IMPORTANT: The conversion functions handle ALL transformations internally, including "data" role conversion, data parts, tool structure changes, and field mapping. Do not add extra filtering, role checks, or type assertions - just call the conversion function and use the result directly.**
+
 #### When LOADING Messages (Database → Application)
 - [ ] **ACTION**: Apply \`convertV4MessageToV5\` when loading from database
 - [ ] **ACTION**: Apply in ALL places where messages are read from storage
