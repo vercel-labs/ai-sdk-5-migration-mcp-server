@@ -1,0 +1,32 @@
+{
+  "name": "ai-sdk-5-migration-mcp-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MCP server to help migrate from AI SDK 4.x to AI SDK 5.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "tsx lib/test.ts"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^1.5.0",
+    "mcp-handler": "^1.0.2",
+    "next": "15.5.4",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.4",
+    "tsx": "^4.20.6",
+    "typescript": "^5"
+  },
+  "packageManager": "pnpm@10.11.0+sha1.4048eeefd564ff1ab248fac3e2854d38245fe2f1"
+}
