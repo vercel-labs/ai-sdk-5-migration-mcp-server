@@ -765,6 +765,7 @@ return createUIMessageStreamResponse({ stream });
 - [ ] Updated transport config: \`experimental_prepareRequestBody\` → \`prepareSendMessagesRequest\`
 - [ ] Updated \`isLoading\` → \`status\` (for more granular control)
 - [ ] Updated \`experimental_resume\` → \`resumeStream\`
+- [ ] **CRITICAL**: If using client-side tool calls: \`onToolCall\` no longer returns values - use \`addToolResult\` from within onToolCall instead (search guide for "onToolCall" for details)
 
 ### 6.7 File Attachments
 **File attachments are now part of the parts array.**
