@@ -4,8 +4,9 @@
 
 1. Backup your project. If you use a versioning control system, make sure all previous versions are committed.
 1. Upgrade to AI SDK 5.0.
-1. Automatically migrate your code using [codemods](#codemods).
-   > If you don't want to use codemods, we recommend resolving all deprecation warnings before upgrading to AI SDK 5.0.
+1. Automatically migrate your code using one of these approaches:
+   - Use the [AI SDK 5 Migration MCP Server](#ai-sdk-5-migration-mcp-server) for AI-assisted migration in Cursor or other MCP-compatible coding agents
+   - Use [codemods](#codemods) to automatically transform your code
 1. Follow the breaking changes guide below.
 1. Verify your project is working as expected.
 1. Commit your changes.
@@ -92,17 +93,17 @@ The `maxTokens` parameter has been renamed to `maxOutputTokens` for clarity.
 
 ```tsx filename="AI SDK 4.0"
 const result = await generateText({
-  model: openai('gpt-4.1'),
+  model: openai("gpt-4.1"),
   maxTokens: 1024,
-  prompt: 'Hello, world!',
+  prompt: "Hello, world!",
 });
 ```
 
 ```tsx filename="AI SDK 5.0"
 const result = await generateText({
-  model: openai('gpt-4.1'),
+  model: openai("gpt-4.1"),
   maxOutputTokens: 1024,
-  prompt: 'Hello, world!',
+  prompt: "Hello, world!",
 });
 ```
 
@@ -113,41 +114,41 @@ const result = await generateText({
 ##### `CoreMessage` → `ModelMessage`
 
 ```tsx filename="AI SDK 4.0"
-import { CoreMessage } from 'ai';
+import { CoreMessage } from "ai";
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { ModelMessage } from 'ai';
+import { ModelMessage } from "ai";
 ```
 
 ##### `Message` → `UIMessage`
 
 ```tsx filename="AI SDK 4.0"
-import { Message, CreateMessage } from 'ai';
+import { Message, CreateMessage } from "ai";
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { UIMessage, CreateUIMessage } from 'ai';
+import { UIMessage, CreateUIMessage } from "ai";
 ```
 
 ##### `convertToCoreMessages` → `convertToModelMessages`
 
 ```tsx filename="AI SDK 4.0"
-import { convertToCoreMessages, streamText } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { convertToCoreMessages, streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
 
 const result = await streamText({
-  model: openai('gpt-4'),
+  model: openai("gpt-4"),
   messages: convertToCoreMessages(messages),
 });
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { convertToModelMessages, streamText } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { convertToModelMessages, streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
 
 const result = await streamText({
-  model: openai('gpt-4'),
+  model: openai("gpt-4"),
   messages: convertToModelMessages(messages),
 });
 ```
@@ -164,24 +165,24 @@ const result = await streamText({
 For `UIMessage`s (previously called `Message`), the `.content` property has been replaced with a `parts` array structure.
 
 ```tsx filename="AI SDK 4.0"
-import { type Message } from 'ai'; // v4 Message type
+import { type Message } from "ai"; // v4 Message type
 
 // Messages (useChat) - had content property
 const message: Message = {
-  id: '1',
-  role: 'user',
-  content: 'Bonjour!',
+  id: "1",
+  role: "user",
+  content: "Bonjour!",
 };
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { type UIMessage, type ModelMessage } from 'ai';
+import { type UIMessage, type ModelMessage } from "ai";
 
 // UIMessages (useChat) - now use parts array
 const uiMessage: UIMessage = {
-  id: '1',
-  role: 'user',
-  parts: [{ type: 'text', text: 'Bonjour!' }],
+  id: "1",
+  role: "user",
+  parts: [{ type: "text", text: "Bonjour!" }],
 };
 ```
 
@@ -191,9 +192,9 @@ The `data` role has been removed from UI messages.
 
 ```tsx filename="AI SDK 4.0"
 const message = {
-  role: 'data',
-  content: 'Some content',
-  data: { customField: 'value' },
+  role: "data",
+  content: "Some content",
+  data: { customField: "value" },
 };
 ```
 
@@ -203,9 +204,9 @@ const stream = createUIMessageStream({
   execute({ writer }) {
     // Write custom data instead of message annotations
     writer.write({
-      type: 'data-custom',
-      id: 'custom-1',
-      data: { customField: 'value' },
+      type: "data-custom",
+      id: "custom-1",
+      data: { customField: "value" },
     });
   },
 });
@@ -217,23 +218,23 @@ The reasoning property on UI messages has been moved to parts.
 
 ```tsx filename="AI SDK 4.0"
 const message: Message = {
-  role: 'assistant',
-  content: 'Hello',
-  reasoning: 'I will greet the user',
+  role: "assistant",
+  content: "Hello",
+  reasoning: "I will greet the user",
 };
 ```
 
 ```tsx filename="AI SDK 5.0"
 const message: UIMessage = {
-  role: 'assistant',
+  role: "assistant",
   parts: [
     {
-      type: 'reasoning',
-      text: 'I will greet the user',
+      type: "reasoning",
+      text: "I will greet the user",
     },
     {
-      type: 'text',
-      text: 'Hello',
+      type: "text",
+      text: "Hello",
     },
   ],
 };
@@ -246,7 +247,7 @@ The `reasoning` property on reasoning UI parts has been renamed to `text`.
 ```tsx filename="AI SDK 4.0"
 {
   message.parts.map((part, index) => {
-    if (part.type === 'reasoning') {
+    if (part.type === "reasoning") {
       return (
         <div key={index} className="reasoning-display">
           {part.reasoning}
@@ -260,7 +261,7 @@ The `reasoning` property on reasoning UI parts has been renamed to `text`.
 ```tsx filename="AI SDK 5.0"
 {
   message.parts.map((part, index) => {
-    if (part.type === 'reasoning') {
+    if (part.type === "reasoning") {
       return (
         <div key={index} className="reasoning-display">
           {part.text}
@@ -277,12 +278,12 @@ File parts now use `.url` instead of `.data` and `.mimeType`.
 
 ```tsx filename="AI SDK 4.0"
 {
-  messages.map(message => (
+  messages.map((message) => (
     <div key={message.id}>
       {message.parts.map((part, index) => {
-        if (part.type === 'text') {
+        if (part.type === "text") {
           return <div key={index}>{part.text}</div>;
-        } else if (part.type === 'file' && part.mimeType.startsWith('image/')) {
+        } else if (part.type === "file" && part.mimeType.startsWith("image/")) {
           return (
             <img
               key={index}
@@ -298,14 +299,14 @@ File parts now use `.url` instead of `.data` and `.mimeType`.
 
 ```tsx filename="AI SDK 5.0"
 {
-  messages.map(message => (
+  messages.map((message) => (
     <div key={message.id}>
       {message.parts.map((part, index) => {
-        if (part.type === 'text') {
+        if (part.type === "text") {
           return <div key={index}>{part.text}</div>;
         } else if (
-          part.type === 'file' &&
-          part.mediaType.startsWith('image/')
+          part.type === "file" &&
+          part.mediaType.startsWith("image/")
         ) {
           return <img key={index} src={part.url} />;
         }
@@ -320,28 +321,28 @@ File parts now use `.url` instead of `.data` and `.mimeType`.
 The `StreamData` class has been completely removed and replaced with UI message streams for custom data.
 
 ```tsx filename="AI SDK 4.0"
-import { StreamData } from 'ai';
+import { StreamData } from "ai";
 
 const streamData = new StreamData();
-streamData.append('custom-data');
+streamData.append("custom-data");
 streamData.close();
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { createUIMessageStream, createUIMessageStreamResponse } from 'ai';
+import { createUIMessageStream, createUIMessageStreamResponse } from "ai";
 
 const stream = createUIMessageStream({
   execute({ writer }) {
     // Write custom data parts
     writer.write({
-      type: 'data-custom',
-      id: 'custom-1',
-      data: 'custom-data',
+      type: "data-custom",
+      id: "custom-1",
+      data: "custom-data",
     });
 
     // Can merge with LLM streams
     const result = streamText({
-      model: openai('gpt-4.1'),
+      model: openai("gpt-4.1"),
       messages,
     });
 
@@ -357,24 +358,24 @@ return createUIMessageStreamResponse({ stream });
 The `writeMessageAnnotation` and `writeData` methods from `DataStreamWriter` have been removed. Instead, use custom data parts with the new `UIMessage` stream architecture.
 
 ```tsx filename="AI SDK 4.0"
-import { openai } from '@ai-sdk/openai';
-import { createDataStreamResponse, streamText } from 'ai';
+import { openai } from "@ai-sdk/openai";
+import { createDataStreamResponse, streamText } from "ai";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
   return createDataStreamResponse({
-    execute: dataStream => {
+    execute: (dataStream) => {
       // Write general data
-      dataStream.writeData('call started');
+      dataStream.writeData("call started");
 
       const result = streamText({
-        model: openai('gpt-4o'),
+        model: openai("gpt-4o"),
         messages,
         onChunk() {
           // Write message annotations
           dataStream.writeMessageAnnotation({
-            status: 'streaming',
+            status: "streaming",
             timestamp: Date.now(),
           });
         },
@@ -385,7 +386,7 @@ export async function POST(req: Request) {
             completed: true,
           });
 
-          dataStream.writeData('call completed');
+          dataStream.writeData("call completed");
         },
       });
 
@@ -396,13 +397,13 @@ export async function POST(req: Request) {
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { openai } from '@ai-sdk/openai';
+import { openai } from "@ai-sdk/openai";
 import {
   createUIMessageStream,
   createUIMessageStreamResponse,
   streamText,
   generateId,
-} from 'ai';
+} from "ai";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
@@ -413,21 +414,21 @@ export async function POST(req: Request) {
 
       // Write general data (transient - not added to message history)
       writer.write({
-        type: 'data-status',
+        type: "data-status",
         id: statusId,
-        data: { status: 'call started' },
+        data: { status: "call started" },
       });
 
       const result = streamText({
-        model: openai('gpt-4o'),
+        model: openai("gpt-4o"),
         messages,
         onChunk() {
           // Write data parts that update during streaming
           writer.write({
-            type: 'data-status',
+            type: "data-status",
             id: statusId,
             data: {
-              status: 'streaming',
+              status: "streaming",
               timestamp: Date.now(),
             },
           });
@@ -435,10 +436,10 @@ export async function POST(req: Request) {
         onFinish() {
           // Write final data parts
           writer.write({
-            type: 'data-status',
+            type: "data-status",
             id: statusId,
             data: {
-              status: 'completed',
+              status: "completed",
             },
           });
         },
@@ -463,8 +464,8 @@ The `providerMetadata` input parameter has been renamed to `providerOptions`. No
 
 ```tsx filename="AI SDK 4.0"
 const result = await generateText({
-  model: openai('gpt-4'),
-  prompt: 'Hello',
+  model: openai("gpt-4"),
+  prompt: "Hello",
   providerMetadata: {
     openai: { store: false },
   },
@@ -473,8 +474,8 @@ const result = await generateText({
 
 ```tsx filename="AI SDK 5.0"
 const result = await generateText({
-  model: openai('gpt-4'),
-  prompt: 'Hello',
+  model: openai("gpt-4"),
+  prompt: "Hello",
   providerOptions: {
     // Input parameter renamed
     openai: { store: false },
@@ -490,10 +491,10 @@ console.log(result.providerMetadata?.openai);
 Tool definitions have been updated to use `inputSchema` instead of `parameters` and error classes have been renamed.
 
 ```tsx filename="AI SDK 4.0"
-import { tool } from 'ai';
+import { tool } from "ai";
 
 const weatherTool = tool({
-  description: 'Get the weather for a city',
+  description: "Get the weather for a city",
   parameters: z.object({
     city: z.string(),
   }),
@@ -504,10 +505,10 @@ const weatherTool = tool({
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { tool } from 'ai';
+import { tool } from "ai";
 
 const weatherTool = tool({
-  description: 'Get the weather for a city',
+  description: "Get the weather for a city",
   inputSchema: z.object({
     city: z.string(),
   }),
@@ -523,27 +524,29 @@ The `experimental_toToolResultContent` option has been renamed to `toModelOutput
 
 ```tsx filename="AI SDK 4.0"
 const screenshotTool = tool({
-  description: 'Take a screenshot',
+  description: "Take a screenshot",
   parameters: z.object({}),
   execute: async () => {
     const imageData = await takeScreenshot();
     return imageData; // base64 string
   },
-  experimental_toToolResultContent: result => [{ type: 'image', data: result }],
+  experimental_toToolResultContent: (result) => [
+    { type: "image", data: result },
+  ],
 });
 ```
 
 ```tsx filename="AI SDK 5.0"
 const screenshotTool = tool({
-  description: 'Take a screenshot',
+  description: "Take a screenshot",
   inputSchema: z.object({}),
   execute: async () => {
     const imageData = await takeScreenshot();
     return imageData;
   },
-  toModelOutput: result => ({
-    type: 'content',
-    value: [{ type: 'media', mediaType: 'image/png', data: result }],
+  toModelOutput: (result) => ({
+    type: "content",
+    value: [{ type: "media", mediaType: "image/png", data: result }],
   }),
 });
 ```
@@ -556,11 +559,11 @@ Tool call and result properties have been renamed for better consistency with sc
 // Tool calls used "args" and "result"
 for await (const part of result.fullStream) {
   switch (part.type) {
-    case 'tool-call':
-      console.log('Tool args:', part.args);
+    case "tool-call":
+      console.log("Tool args:", part.args);
       break;
-    case 'tool-result':
-      console.log('Tool result:', part.result);
+    case "tool-result":
+      console.log("Tool result:", part.result);
       break;
   }
 }
@@ -570,11 +573,11 @@ for await (const part of result.fullStream) {
 // Tool calls now use "input" and "output"
 for await (const part of result.fullStream) {
   switch (part.type) {
-    case 'tool-call':
-      console.log('Tool input:', part.input);
+    case "tool-call":
+      console.log("Tool input:", part.input);
       break;
-    case 'tool-result':
-      console.log('Tool output:', part.output);
+    case "tool-result":
+      console.log("Tool output:", part.output);
       break;
   }
 }
@@ -585,7 +588,7 @@ for await (const part of result.fullStream) {
 The `ToolExecutionError` class has been removed. Tool execution errors now appear as `tool-error` content parts in the result steps, enabling automated LLM roundtrips in multi-step scenarios.
 
 ```tsx filename="AI SDK 4.0"
-import { ToolExecutionError } from 'ai';
+import { ToolExecutionError } from "ai";
 
 try {
   const result = await generateText({
@@ -593,9 +596,9 @@ try {
   });
 } catch (error) {
   if (error instanceof ToolExecutionError) {
-    console.log('Tool execution failed:', error.message);
-    console.log('Tool name:', error.toolName);
-    console.log('Tool input:', error.toolInput);
+    console.log("Tool execution failed:", error.message);
+    console.log("Tool name:", error.toolName);
+    console.log("Tool input:", error.toolInput);
   }
 }
 ```
@@ -607,14 +610,14 @@ const { steps } = await generateText({
 });
 
 // check for tool errors in the steps
-const toolErrors = steps.flatMap(step =>
-  step.content.filter(part => part.type === 'tool-error'),
+const toolErrors = steps.flatMap((step) =>
+  step.content.filter((part) => part.type === "tool-error"),
 );
 
-toolErrors.forEach(toolError => {
-  console.log('Tool error:', toolError.error);
-  console.log('Tool name:', toolError.toolName);
-  console.log('Tool input:', toolError.input);
+toolErrors.forEach((toolError) => {
+  console.log("Tool error:", toolError.error);
+  console.log("Tool name:", toolError.toolName);
+  console.log("Tool input:", toolError.input);
 });
 ```
 
@@ -626,7 +629,7 @@ The `toolCallStreaming` option has been removed in AI SDK 5.0. Tool call streami
 
 ```tsx filename="AI SDK 4.0"
 const result = streamText({
-  model: openai('gpt-4o'),
+  model: openai("gpt-4o"),
   messages,
   toolCallStreaming: true, // Optional parameter to enable streaming
   tools: {
@@ -638,7 +641,7 @@ const result = streamText({
 
 ```tsx filename="AI SDK 5.0"
 const result = streamText({
-  model: openai('gpt-4o'),
+  model: openai("gpt-4o"),
   messages: convertToModelMessages(messages),
   // toolCallStreaming removed - streaming is always enabled
   tools: {
@@ -655,8 +658,8 @@ In v5, UI tool parts use typed naming: `tool-${toolName}` instead of generic typ
 ```tsx filename="AI SDK 4.0"
 // Generic tool-invocation type
 {
-  message.parts.map(part => {
-    if (part.type === 'tool-invocation') {
+  message.parts.map((part) => {
+    if (part.type === "tool-invocation") {
       return <div>{part.toolInvocation.toolName}</div>;
     }
   });
@@ -666,11 +669,11 @@ In v5, UI tool parts use typed naming: `tool-${toolName}` instead of generic typ
 ```tsx filename="AI SDK 5.0"
 // Type-safe tool parts with specific names
 {
-  message.parts.map(part => {
+  message.parts.map((part) => {
     switch (part.type) {
-      case 'tool-getWeatherInformation':
+      case "tool-getWeatherInformation":
         return <div>Getting weather...</div>;
-      case 'tool-askForConfirmation':
+      case "tool-askForConfirmation":
         return <div>Asking for confirmation...</div>;
     }
   });
@@ -686,14 +689,14 @@ AI SDK 5.0 introduces dynamic tools for handling tools with unknown types at dev
 The new `dynamicTool` helper function allows you to define tools where the input and output types are not known at compile time.
 
 ```tsx filename="AI SDK 5.0"
-import { dynamicTool } from 'ai';
-import { z } from 'zod';
+import { dynamicTool } from "ai";
+import { z } from "zod";
 
 // Define a dynamic tool
 const runtimeTool = dynamicTool({
-  description: 'A tool defined at runtime',
+  description: "A tool defined at runtime",
   inputSchema: z.object({}),
-  execute: async input => {
+  execute: async (input) => {
     // Input and output are typed as 'unknown'
     return { result: `Processed: ${input.query}` };
   },
@@ -705,7 +708,7 @@ const runtimeTool = dynamicTool({
 MCP tools that don't provide schemas are now automatically treated as dynamic tools:
 
 ```tsx filename="AI SDK 5.0"
-import { MCPClient } from 'ai';
+import { MCPClient } from "ai";
 
 const client = new MCPClient({
   /* ... */
@@ -722,7 +725,7 @@ When using both static and dynamic tools together, use the `dynamic` flag for ty
 
 ```tsx filename="AI SDK 5.0"
 const result = await generateText({
-  model: openai('gpt-4'),
+  model: openai("gpt-4"),
   tools: {
     // Static tool with known types
     weather: weatherTool,
@@ -731,18 +734,18 @@ const result = await generateText({
       /* ... */
     }),
   },
-  onStepFinish: step => {
+  onStepFinish: (step) => {
     // Handle tool calls with type safety
     for (const toolCall of step.toolCalls) {
       if (toolCall.dynamic) {
         // Dynamic tool: input/output are 'unknown'
-        console.log('Dynamic tool called:', toolCall.toolName);
+        console.log("Dynamic tool called:", toolCall.toolName);
         continue;
       }
 
       // Static tools have full type inference
       switch (toolCall.toolName) {
-        case 'weather':
+        case "weather":
           // TypeScript knows the exact types
           console.log(toolCall.input.location); // string
           break;
@@ -761,11 +764,11 @@ UI messages now include a `dynamic-tool` part type for rendering dynamic tool in
   message.parts.map((part, index) => {
     switch (part.type) {
       // Static tools use specific types
-      case 'tool-weather':
+      case "tool-weather":
         return <div>Weather: {part.input.city}</div>;
 
       // Dynamic tools use the generic dynamic-tool type
-      case 'dynamic-tool':
+      case "dynamic-tool":
         return (
           <div>
             Dynamic tool: {part.toolName}
@@ -783,13 +786,13 @@ When iterating over `toolCalls` and `toolResults`, you now need to check the `dy
 
 ```tsx filename="AI SDK 4.0"
 // Direct type checking worked without dynamic flag
-onStepFinish: step => {
+onStepFinish: (step) => {
   for (const toolCall of step.toolCalls) {
     switch (toolCall.toolName) {
-      case 'weather':
+      case "weather":
         console.log(toolCall.input.location); // typed as string
         break;
-      case 'search':
+      case "search":
         console.log(toolCall.input.query); // typed as string
         break;
     }
@@ -799,21 +802,21 @@ onStepFinish: step => {
 
 ```tsx filename="AI SDK 5.0"
 // Must check dynamic flag first for type narrowing
-onStepFinish: step => {
+onStepFinish: (step) => {
   for (const toolCall of step.toolCalls) {
     // Check if it's a dynamic tool first
     if (toolCall.dynamic) {
-      console.log('Dynamic tool:', toolCall.toolName);
-      console.log('Input:', toolCall.input); // typed as unknown
+      console.log("Dynamic tool:", toolCall.toolName);
+      console.log("Input:", toolCall.input); // typed as unknown
       continue;
     }
 
     // Now TypeScript knows it's a static tool
     switch (toolCall.toolName) {
-      case 'weather':
+      case "weather":
         console.log(toolCall.input.location); // typed as string
         break;
-      case 'search':
+      case "search":
         console.log(toolCall.input.query); // typed as string
         break;
     }
@@ -828,18 +831,18 @@ Tool UI parts now use more granular states that better represent the streaming l
 ```tsx filename="AI SDK 4.0"
 // Old states
 {
-  message.parts.map(part => {
-    if (part.type === 'tool-invocation') {
+  message.parts.map((part) => {
+    if (part.type === "tool-invocation") {
       switch (part.toolInvocation.state) {
-        case 'partial-call':
+        case "partial-call":
           return <div>Loading...</div>;
-        case 'call':
+        case "call":
           return (
             <div>
               Tool called with {JSON.stringify(part.toolInvocation.args)}
             </div>
           );
-        case 'result':
+        case "result":
           return <div>Result: {part.toolInvocation.result}</div>;
       }
     }
@@ -850,17 +853,17 @@ Tool UI parts now use more granular states that better represent the streaming l
 ```tsx filename="AI SDK 5.0"
 // New granular states
 {
-  message.parts.map(part => {
+  message.parts.map((part) => {
     switch (part.type) {
-      case 'tool-getWeatherInformation':
+      case "tool-getWeatherInformation":
         switch (part.state) {
-          case 'input-streaming':
+          case "input-streaming":
             return <pre>{JSON.stringify(part.input, null, 2)}</pre>;
-          case 'input-available':
+          case "input-available":
             return <div>Getting weather for {part.input.city}...</div>;
-          case 'output-available':
+          case "output-available":
             return <div>Weather: {part.output}</div>;
-          case 'output-error':
+          case "output-error":
             return <div>Error: {part.errorText}</div>;
         }
     }
@@ -883,21 +886,21 @@ In v4, you typically rendered tool invocations using a catch-all `tool-invocatio
 {
   message.parts.map((part, index) => {
     switch (part.type) {
-      case 'text':
+      case "text":
         return <div key={index}>{part.text}</div>;
-      case 'tool-invocation':
+      case "tool-invocation":
         const { toolInvocation } = part;
         return (
           <details key={`tool-${toolInvocation.toolCallId}`}>
             <summary>
               <span>{toolInvocation.toolName}</span>
-              {toolInvocation.state === 'result' ? (
+              {toolInvocation.state === "result" ? (
                 <span>Click to expand</span>
               ) : (
                 <span>calling...</span>
               )}
             </summary>
-            {toolInvocation.state === 'result' ? (
+            {toolInvocation.state === "result" ? (
               <div>
                 <pre>{JSON.stringify(toolInvocation.result, null, 2)}</pre>
               </div>
@@ -910,12 +913,12 @@ In v4, you typically rendered tool invocations using a catch-all `tool-invocatio
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { isToolUIPart, getToolName } from 'ai';
+import { isToolUIPart, getToolName } from "ai";
 
 {
   message.parts.map((part, index) => {
     switch (part.type) {
-      case 'text':
+      case "text":
         return <div key={index}>{part.text}</div>;
       default:
         if (isToolUIPart(part)) {
@@ -924,13 +927,13 @@ import { isToolUIPart, getToolName } from 'ai';
             <details key={`tool-${toolInvocation.toolCallId}`}>
               <summary>
                 <span>{getToolName(toolInvocation)}</span>
-                {toolInvocation.state === 'output-available' ? (
+                {toolInvocation.state === "output-available" ? (
                   <span>Click to expand</span>
                 ) : (
                   <span>calling...</span>
                 )}
               </summary>
-              {toolInvocation.state === 'output-available' ? (
+              {toolInvocation.state === "output-available" ? (
                 <div>
                   <pre>{JSON.stringify(toolInvocation.output, null, 2)}</pre>
                 </div>
@@ -952,18 +955,18 @@ const result = await generateText({
   model: someModel,
   messages: [
     {
-      role: 'user',
+      role: "user",
       content: [
-        { type: 'text', text: 'What do you see?' },
+        { type: "text", text: "What do you see?" },
         {
-          type: 'image',
+          type: "image",
           image: new Uint8Array([0, 1, 2, 3]),
-          mimeType: 'image/png',
+          mimeType: "image/png",
         },
         {
-          type: 'file',
+          type: "file",
           data: contents,
-          mimeType: 'application/pdf',
+          mimeType: "application/pdf",
         },
       ],
     },
@@ -976,18 +979,18 @@ const result = await generateText({
   model: someModel,
   messages: [
     {
-      role: 'user',
+      role: "user",
       content: [
-        { type: 'text', text: 'What do you see?' },
+        { type: "text", text: "What do you see?" },
         {
-          type: 'image',
+          type: "image",
           image: new Uint8Array([0, 1, 2, 3]),
-          mediaType: 'image/png',
+          mediaType: "image/png",
         },
         {
-          type: 'file',
+          type: "file",
           data: contents,
-          mediaType: 'application/pdf',
+          mediaType: "application/pdf",
         },
       ],
     },
@@ -1019,8 +1022,8 @@ In `generateText()` and `streamText()` results, reasoning properties have been r
 
 ```tsx filename="AI SDK 4.0"
 const result = await generateText({
-  model: anthropic('claude-sonnet-4-20250514'),
-  prompt: 'Explain your reasoning',
+  model: anthropic("claude-sonnet-4-20250514"),
+  prompt: "Explain your reasoning",
 });
 
 console.log(result.reasoning); // String reasoning text
@@ -1029,8 +1032,8 @@ console.log(result.reasoningDetails); // Array of reasoning details
 
 ```tsx filename="AI SDK 5.0"
 const result = await generateText({
-  model: anthropic('claude-sonnet-4-20250514'),
-  prompt: 'Explain your reasoning',
+  model: anthropic("claude-sonnet-4-20250514"),
+  prompt: "Explain your reasoning",
 });
 
 console.log(result.reasoningText); // String reasoning text
@@ -1062,7 +1065,7 @@ Image model settings have been moved to `providerOptions`.
 
 ```tsx filename="AI SDK 4.0"
 await generateImage({
-  model: luma.image('photon-flash-1', {
+  model: luma.image("photon-flash-1", {
     maxImagesPerCall: 5,
     pollIntervalMillis: 500,
   }),
@@ -1073,7 +1076,7 @@ await generateImage({
 
 ```tsx filename="AI SDK 5.0"
 await generateImage({
-  model: luma.image('photon-flash-1'),
+  model: luma.image("photon-flash-1"),
   prompt,
   n: 10,
   maxImagesPerCall: 5,
@@ -1090,16 +1093,16 @@ await generateImage({
 The `stepType` property has been removed from step results.
 
 ```tsx filename="AI SDK 4.0"
-steps.forEach(step => {
+steps.forEach((step) => {
   switch (step.stepType) {
-    case 'initial':
-      console.log('Initial step');
+    case "initial":
+      console.log("Initial step");
       break;
-    case 'tool-result':
-      console.log('Tool result step');
+    case "tool-result":
+      console.log("Tool result step");
       break;
-    case 'done':
-      console.log('Final step');
+    case "done":
+      console.log("Final step");
       break;
   }
 });
@@ -1108,11 +1111,11 @@ steps.forEach(step => {
 ```tsx filename="AI SDK 5.0"
 steps.forEach((step, index) => {
   if (index === 0) {
-    console.log('Initial step');
+    console.log("Initial step");
   } else if (step.toolResults.length > 0) {
-    console.log('Tool result step');
+    console.log("Tool result step");
   } else {
-    console.log('Final step');
+    console.log("Final step");
   }
 });
 ```
@@ -1124,7 +1127,7 @@ For core functions like `generateText` and `streamText`, the `maxSteps` paramete
 ```tsx filename="AI SDK 4.0"
 // V4: Simple numeric limit
 const result = await generateText({
-  model: openai('gpt-4'),
+  model: openai("gpt-4"),
   messages,
   maxSteps: 5, // Stop after a maximum of 5 steps
 });
@@ -1136,11 +1139,11 @@ const { messages } = useChat({
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { stepCountIs, hasToolCall } from 'ai';
+import { stepCountIs, hasToolCall } from "ai";
 
 // V5: Server-side - flexible stopping conditions with stopWhen
 const result = await generateText({
-  model: openai('gpt-4'),
+  model: openai("gpt-4"),
   messages,
   // Only triggers when last step has tool results
   stopWhen: stepCountIs(5), // Stop at step 5 if tools were called
@@ -1148,9 +1151,9 @@ const result = await generateText({
 
 // Server-side - stop when specific tool is called
 const result = await generateText({
-  model: openai('gpt-4'),
+  model: openai("gpt-4"),
   messages,
-  stopWhen: hasToolCall('finalizeTask'), // Stop when finalizeTask tool is called
+  stopWhen: hasToolCall("finalizeTask"), // Stop when finalizeTask tool is called
 });
 ```
 
@@ -1162,19 +1165,19 @@ const result = await generateText({
 stopWhen: stepCountIs(5);
 
 // Stop when specific tool is called
-stopWhen: hasToolCall('finalizeTask');
+stopWhen: hasToolCall("finalizeTask");
 
 // Multiple conditions (stops if ANY condition is met)
 stopWhen: [
   stepCountIs(10), // Maximum 10 steps
-  hasToolCall('submitOrder'), // Or when order is submitted
+  hasToolCall("submitOrder"), // Or when order is submitted
 ];
 
 // Custom condition based on step content
 stopWhen: ({ steps }) => {
   const lastStep = steps[steps.length - 1];
   // Custom logic - only triggers if last step has tool results
-  return lastStep?.text?.includes('COMPLETE');
+  return lastStep?.text?.includes("COMPLETE");
 };
 ```
 
@@ -1205,11 +1208,11 @@ console.log(result.totalUsage);
 The `ai/rsc` export has been extracted to a separate package `@ai-sdk/rsc`.
 
 ```tsx filename="AI SDK 4.0"
-import { createStreamableValue } from 'ai/rsc';
+import { createStreamableValue } from "ai/rsc";
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { createStreamableValue } from '@ai-sdk/rsc';
+import { createStreamableValue } from "@ai-sdk/rsc";
 ```
 
 <Note>Don't forget to install the new package: `npm install @ai-sdk/rsc`</Note>
@@ -1219,11 +1222,11 @@ import { createStreamableValue } from '@ai-sdk/rsc';
 The deprecated `ai/react` export has been removed in favor of `@ai-sdk/react`.
 
 ```tsx filename="AI SDK 4.0"
-import { useChat } from 'ai/react';
+import { useChat } from "ai/react";
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { useChat } from '@ai-sdk/react';
+import { useChat } from "@ai-sdk/react";
 ```
 
 <Note>
@@ -1246,21 +1249,21 @@ const { messages, sendMessage } = useChat({
 
 ```tsx filename="AI SDK 5.0"
 // Server-side: Use stopWhen for multi-step control
-import { streamText, convertToModelMessages, stepCountIs } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { streamText, convertToModelMessages, stepCountIs } from "ai";
+import { openai } from "@ai-sdk/openai";
 
 const result = await streamText({
-  model: openai('gpt-4'),
+  model: openai("gpt-4"),
   messages: convertToModelMessages(messages),
   stopWhen: stepCountIs(5), // Stop after 5 steps with tool calls
 });
 
 // Client-side: Configure automatic submission
-import { useChat } from '@ai-sdk/react';
+import { useChat } from "@ai-sdk/react";
 import {
   DefaultChatTransport,
   lastAssistantMessageIsCompleteWithToolCalls,
-} from 'ai';
+} from "ai";
 
 const { messages, sendMessage, addToolResult } = useChat({
   // Automatically submit when all tool results are available
@@ -1295,7 +1298,7 @@ For more details on the new tool submission approach, see the [Tool Result Submi
 The `initialMessages` option has been renamed to `messages`.
 
 ```tsx filename="AI SDK 4.0"
-import { useChat, type Message } from '@ai-sdk/react';
+import { useChat, type Message } from "@ai-sdk/react";
 
 function ChatComponent({ initialMessages }: { initialMessages: Message[] }) {
   const { messages } = useChat({
@@ -1308,7 +1311,7 @@ function ChatComponent({ initialMessages }: { initialMessages: Message[] }) {
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { useChat, type UIMessage } from '@ai-sdk/react';
+import { useChat, type UIMessage } from "@ai-sdk/react";
 
 function ChatComponent({ initialMessages }: { initialMessages: UIMessage[] }) {
   const { messages } = useChat({
@@ -1327,14 +1330,14 @@ In v4, you could share chat state between components by using the same `id` para
 ```tsx filename="AI SDK 4.0"
 // Component A
 const { messages } = useChat({
-  id: 'shared-chat',
-  api: '/api/chat',
+  id: "shared-chat",
+  api: "/api/chat",
 });
 
 // Component B - would share the same chat state
 const { messages } = useChat({
-  id: 'shared-chat',
-  api: '/api/chat',
+  id: "shared-chat",
+  api: "/api/chat",
 });
 ```
 
@@ -1365,24 +1368,24 @@ For a complete example of sharing chat state across components, see the [Share C
 Configuration is now handled through transport objects instead of direct API options.
 
 ```tsx filename="AI SDK 4.0"
-import { useChat } from '@ai-sdk/react';
+import { useChat } from "@ai-sdk/react";
 
 const { messages } = useChat({
-  api: '/api/chat',
-  credentials: 'include',
-  headers: { 'Custom-Header': 'value' },
+  api: "/api/chat",
+  credentials: "include",
+  headers: { "Custom-Header": "value" },
 });
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 
 const { messages } = useChat({
   transport: new DefaultChatTransport({
-    api: '/api/chat',
-    credentials: 'include',
-    headers: { 'Custom-Header': 'value' },
+    api: "/api/chat",
+    credentials: "include",
+    headers: { "Custom-Header": "value" },
   }),
 });
 ```
@@ -1392,11 +1395,11 @@ const { messages } = useChat({
 The `useChat` hook no longer manages input state internally. You must now manage input state manually.
 
 ```tsx filename="AI SDK 4.0"
-import { useChat } from '@ai-sdk/react';
+import { useChat } from "@ai-sdk/react";
 
 export default function Page() {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: '/api/chat',
+    api: "/api/chat",
   });
 
   return (
@@ -1409,25 +1412,25 @@ export default function Page() {
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
-import { useState } from 'react';
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
+import { useState } from "react";
 
 export default function Page() {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const { messages, sendMessage } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
+    transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     sendMessage({ text: input });
-    setInput('');
+    setInput("");
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <input value={input} onChange={e => setInput(e.target.value)} />
+      <input value={input} onChange={(e) => setInput(e.target.value)} />
       <button type="submit">Send</button>
     </form>
   );
@@ -1442,15 +1445,15 @@ The `append` function has been replaced with `sendMessage` and requires structur
 const { append } = useChat();
 
 // Simple text message
-append({ role: 'user', content: 'Hello' });
+append({ role: "user", content: "Hello" });
 
 // With custom body
 append(
   {
-    role: 'user',
-    content: 'Hello',
+    role: "user",
+    content: "Hello",
   },
-  { body: { imageUrl: 'https://...' } },
+  { body: { imageUrl: "https://..." } },
 );
 ```
 
@@ -1458,17 +1461,17 @@ append(
 const { sendMessage } = useChat();
 
 // Simple text message (most common usage)
-sendMessage({ text: 'Hello' });
+sendMessage({ text: "Hello" });
 
 // Or with explicit parts array
 sendMessage({
-  parts: [{ type: 'text', text: 'Hello' }],
+  parts: [{ type: "text", text: "Hello" }],
 });
 
 // With custom body (via request options)
 sendMessage(
-  { role: 'user', parts: [{ type: 'text', text: 'Hello' }] },
-  { body: { imageUrl: 'https://...' } },
+  { role: "user", parts: [{ type: "text", text: "Hello" }] },
+  { body: { imageUrl: "https://..." } },
 );
 ```
 
@@ -1490,7 +1493,7 @@ const { regenerate } = useChat();
 regenerate();
 
 // Regenerate specific message
-regenerate({ messageId: 'message-123' });
+regenerate({ messageId: "message-123" });
 ```
 
 #### onResponse Removal
@@ -1549,8 +1552,8 @@ The `data` and `allowEmptySubmit` options have been removed from `ChatRequestOpt
 
 ```tsx filename="AI SDK 4.0"
 handleSubmit(e, {
-  data: { imageUrl: 'https://...' },
-  body: { custom: 'value' },
+  data: { imageUrl: "https://..." },
+  body: { custom: "value" },
   allowEmptySubmit: true,
 });
 ```
@@ -1562,8 +1565,8 @@ sendMessage(
   },
   {
     body: {
-      custom: 'value',
-      imageUrl: 'https://...', // Move data to body
+      custom: "value",
+      imageUrl: "https://...", // Move data to body
     },
   },
 );
@@ -1574,11 +1577,11 @@ sendMessage(
 `RequestOptions` has been renamed to `CompletionRequestOptions`.
 
 ```tsx filename="AI SDK 4.0"
-import type { RequestOptions } from 'ai';
+import type { RequestOptions } from "ai";
 ```
 
 ```tsx filename="AI SDK 5.0"
-import type { CompletionRequestOptions } from 'ai';
+import type { CompletionRequestOptions } from "ai";
 ```
 
 #### addToolResult Changes
@@ -1590,8 +1593,8 @@ const { addToolResult } = useChat();
 
 // Add tool result with 'result' parameter
 addToolResult({
-  toolCallId: 'tool-call-123',
-  result: 'Weather: 72°F, sunny',
+  toolCallId: "tool-call-123",
+  result: "Weather: 72°F, sunny",
 });
 ```
 
@@ -1600,9 +1603,9 @@ const { addToolResult } = useChat();
 
 // Add tool result with 'output' parameter and 'tool' name for type safety
 addToolResult({
-  tool: 'getWeather',
-  toolCallId: 'tool-call-123',
-  output: 'Weather: 72°F, sunny',
+  tool: "getWeather",
+  toolCallId: "tool-call-123",
+  output: "Weather: 72°F, sunny",
 });
 ```
 
@@ -1623,8 +1626,8 @@ const { messages, sendMessage, addToolResult } = useChat({
 
   // Automatic submission by returning a value
   async onToolCall({ toolCall }) {
-    if (toolCall.toolName === 'getLocation') {
-      const cities = ['New York', 'Los Angeles', 'Chicago', 'San Francisco'];
+    if (toolCall.toolName === "getLocation") {
+      const cities = ["New York", "Los Angeles", "Chicago", "San Francisco"];
       return cities[Math.floor(Math.random() * cities.length)];
     }
   },
@@ -1632,23 +1635,23 @@ const { messages, sendMessage, addToolResult } = useChat({
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { useChat } from '@ai-sdk/react';
+import { useChat } from "@ai-sdk/react";
 import {
   DefaultChatTransport,
   lastAssistantMessageIsCompleteWithToolCalls,
-} from 'ai';
+} from "ai";
 
 const { messages, sendMessage, addToolResult } = useChat({
   // Automatic submission with helper
   sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
 
   async onToolCall({ toolCall }) {
-    if (toolCall.toolName === 'getLocation') {
-      const cities = ['New York', 'Los Angeles', 'Chicago', 'San Francisco'];
+    if (toolCall.toolName === "getLocation") {
+      const cities = ["New York", "Los Angeles", "Chicago", "San Francisco"];
 
       // Important: Don't await inside onToolCall to avoid deadlocks
       addToolResult({
-        tool: 'getLocation',
+        tool: "getLocation",
         toolCallId: toolCall.toolCallId,
         output: cities[Math.floor(Math.random() * cities.length)],
       });
@@ -1695,7 +1698,7 @@ In v4, the `body` option in useChat configuration would dynamically update with 
 const [temperature, setTemperature] = useState(0.7);
 
 const { messages } = useChat({
-  api: '/api/chat',
+  api: "/api/chat",
   body: {
     temperature, // This would update dynamically in v4
   },
@@ -1707,7 +1710,7 @@ const [temperature, setTemperature] = useState(0.7);
 
 // Option 1: Use request-level configuration (Recommended)
 const { messages, sendMessage } = useChat({
-  transport: new DefaultChatTransport({ api: '/api/chat' }),
+  transport: new DefaultChatTransport({ api: "/api/chat" }),
 });
 
 // Pass dynamic values at request time
@@ -1726,7 +1729,7 @@ temperatureRef.current = temperature;
 
 const { messages } = useChat({
   transport: new DefaultChatTransport({
-    api: '/api/chat',
+    api: "/api/chat",
     body: () => ({
       temperature: temperatureRef.current,
     }),
@@ -1744,19 +1747,19 @@ In v4, usage information was directly accessible through the `onFinish` callback
 const { messages } = useChat({
   onFinish(message, options) {
     const usage = options.usage;
-    console.log('Usage:', usage);
+    console.log("Usage:", usage);
   },
 });
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { openai } from '@ai-sdk/openai';
+import { openai } from "@ai-sdk/openai";
 import {
   convertToModelMessages,
   streamText,
   UIMessage,
   type LanguageModelUsage,
-} from 'ai';
+} from "ai";
 
 // Create a new metadata type (optional for type-safety)
 type MyMetadata = {
@@ -1770,7 +1773,7 @@ export async function POST(req: Request) {
   const { messages }: { messages: MyUIMessage[] } = await req.json();
 
   const result = streamText({
-    model: openai('gpt-4o'),
+    model: openai("gpt-4o"),
     messages: convertToModelMessages(messages),
   });
 
@@ -1778,7 +1781,7 @@ export async function POST(req: Request) {
     originalMessages: messages,
     messageMetadata: ({ part }) => {
       // Send total usage when generation is finished
-      if (part.type === 'finish') {
+      if (part.type === "finish") {
         return { totalUsage: part.totalUsage };
       }
     },
@@ -1789,27 +1792,27 @@ export async function POST(req: Request) {
 Then, on the client, you can access the message-level metadata.
 
 ```tsx filename="AI SDK 5.0 - Client"
-'use client';
+"use client";
 
-import { useChat } from '@ai-sdk/react';
-import type { MyUIMessage } from './api/chat/route';
-import { DefaultChatTransport } from 'ai';
+import { useChat } from "@ai-sdk/react";
+import type { MyUIMessage } from "./api/chat/route";
+import { DefaultChatTransport } from "ai";
 
 export default function Chat() {
   // Use custom message type defined on the server (optional for type-safety)
   const { messages } = useChat<MyUIMessage>({
     transport: new DefaultChatTransport({
-      api: '/api/chat',
+      api: "/api/chat",
     }),
   });
 
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-      {messages.map(m => (
+      {messages.map((m) => (
         <div key={m.id} className="whitespace-pre-wrap">
-          {m.role === 'user' ? 'User: ' : 'AI: '}
-          {m.parts.map(part => {
-            if (part.type === 'text') {
+          {m.role === "user" ? "User: " : "AI: "}
+          {m.parts.map((part) => {
+            if (part.type === "text") {
               return part.text;
             }
           })}
@@ -1827,17 +1830,17 @@ export default function Chat() {
 You can also access your metadata from the `onFinish` callback of `useChat`:
 
 ```tsx filename="AI SDK 5.0 - onFinish"
-'use client';
+"use client";
 
-import { useChat } from '@ai-sdk/react';
-import type { MyUIMessage } from './api/chat/route';
-import { DefaultChatTransport } from 'ai';
+import { useChat } from "@ai-sdk/react";
+import type { MyUIMessage } from "./api/chat/route";
+import { DefaultChatTransport } from "ai";
 
 export default function Chat() {
   // Use custom message type defined on the server (optional for type-safety)
   const { messages } = useChat<MyUIMessage>({
     transport: new DefaultChatTransport({
-      api: '/api/chat',
+      api: "/api/chat",
     }),
     onFinish: ({ message }) => {
       // Access message metadata via onFinish callback
@@ -1852,10 +1855,10 @@ export default function Chat() {
 The `experimental_prepareRequestBody` option has been replaced with `prepareSendMessagesRequest` in the transport configuration.
 
 ```tsx filename="AI SDK 4.0"
-import { useChat } from '@ai-sdk/react';
+import { useChat } from "@ai-sdk/react";
 
 const { messages } = useChat({
-  api: '/api/chat',
+  api: "/api/chat",
   // Only send the last message to the server:
   experimental_prepareRequestBody({ messages, id }) {
     return { message: messages[messages.length - 1], id };
@@ -1864,12 +1867,12 @@ const { messages } = useChat({
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 
 const { messages } = useChat({
   transport: new DefaultChatTransport({
-    api: '/api/chat',
+    api: "/api/chat",
     // Only send the last message to the server:
     prepareSendMessagesRequest({ messages, id }) {
       return { body: { message: messages[messages.length - 1], id } };
@@ -1943,19 +1946,19 @@ The Svelte integration has also been updated with new constructor patterns and r
 #### Constructor API Changes
 
 ```js filename="@ai-sdk/svelte v1"
-import { Chat } from '@ai-sdk/svelte';
+import { Chat } from "@ai-sdk/svelte";
 
 const chatInstance = Chat({
-  api: '/api/chat',
+  api: "/api/chat",
 });
 ```
 
 ```js filename="@ai-sdk/svelte v2"
-import { Chat } from '@ai-sdk/svelte';
-import { DefaultChatTransport } from 'ai';
+import { Chat } from "@ai-sdk/svelte";
+import { DefaultChatTransport } from "ai";
 
 const chatInstance = Chat(() => ({
-  transport: new DefaultChatTransport({ api: '/api/chat' }),
+  transport: new DefaultChatTransport({ api: "/api/chat" }),
 }));
 ```
 
@@ -1984,12 +1987,12 @@ const { messages, input, handleSubmit } = chatInstance;
 
 ```js filename="@ai-sdk/svelte v2"
 // Must manage input state manually
-let input = '';
+let input = "";
 const { messages, sendMessage } = chatInstance;
 
 const handleSubmit = () => {
   sendMessage({ text: input });
-  input = '';
+  input = "";
 };
 ```
 
@@ -1998,11 +2001,11 @@ const handleSubmit = () => {
 The `@ai-sdk/ui-utils` package has been removed and its exports moved to the main `ai` package.
 
 ```tsx filename="AI SDK 4.0"
-import { getTextFromDataUrl } from '@ai-sdk/ui-utils';
+import { getTextFromDataUrl } from "@ai-sdk/ui-utils";
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { getTextFromDataUrl } from 'ai';
+import { getTextFromDataUrl } from "ai";
 ```
 
 **Note**: `processDataStream` was removed entirely in v5.0. Use `readUIMessageStream` instead for processing UI message streams, or use the more configurable Chat/useChat APIs for most use cases.
@@ -2032,7 +2035,7 @@ const {
 The `useAssistant` hook has been removed.
 
 ```tsx filename="AI SDK 4.0"
-import { useAssistant } from '@ai-sdk/react';
+import { useAssistant } from "@ai-sdk/react";
 ```
 
 ```tsx filename="AI SDK 5.0"
@@ -2048,15 +2051,15 @@ The `experimental_attachments` property has been replaced with the parts array.
 
 ```tsx filename="AI SDK 4.0"
 {
-  messages.map(message => (
+  messages.map((message) => (
     <div className="flex flex-col gap-2">
       {message.content}
 
       <div className="flex flex-row gap-2">
         {message.experimental_attachments?.map((attachment, index) =>
-          attachment.contentType?.includes('image/') ? (
+          attachment.contentType?.includes("image/") ? (
             <img src={attachment.url} alt={attachment.name} />
-          ) : attachment.contentType?.includes('text/') ? (
+          ) : attachment.contentType?.includes("text/") ? (
             <div className="w-32 h-24 p-2 overflow-hidden text-xs border rounded-md ellipsis text-zinc-500">
               {getTextFromDataUrl(attachment.url)}
             </div>
@@ -2070,14 +2073,14 @@ The `experimental_attachments` property has been replaced with the parts array.
 
 ```tsx filename="AI SDK 5.0"
 {
-  messages.map(message => (
+  messages.map((message) => (
     <div>
       {message.parts.map((part, index) => {
-        if (part.type === 'text') {
+        if (part.type === "text") {
           return <div key={index}>{part.text}</div>;
         }
 
-        if (part.type === 'file' && part.mediaType?.startsWith('image/')) {
+        if (part.type === "file" && part.mediaType?.startsWith("image/")) {
           return (
             <div key={index}>
               <img src={part.url} />
@@ -2098,7 +2101,7 @@ Embedding model settings now use provider options instead of model parameters.
 
 ```tsx filename="AI SDK 4.0"
 const { embedding } = await embed({
-  model: openai('text-embedding-3-small', {
+  model: openai("text-embedding-3-small", {
     dimensions: 10,
   }),
 });
@@ -2106,7 +2109,7 @@ const { embedding } = await embed({
 
 ```tsx filename="AI SDK 5.0"
 const { embedding } = await embed({
-  model: openai('text-embedding-3-small'),
+  model: openai("text-embedding-3-small"),
   providerOptions: {
     openai: {
       dimensions: 10,
@@ -2134,11 +2137,11 @@ const { response } = await embed(/* */);
 ```tsx filename="AI SDK 5.0"
 const { embeddings, usage } = await embedMany({
   maxParallelCalls: 2, // Limit parallel requests
-  model: openai.textEmbeddingModel('text-embedding-3-small'),
+  model: openai.textEmbeddingModel("text-embedding-3-small"),
   values: [
-    'sunny day at the beach',
-    'rainy afternoon in the city',
-    'snowy night in the mountains',
+    "sunny day at the beach",
+    "rainy afternoon in the city",
+    "snowy night in the mountains",
   ],
 });
 ```
@@ -2148,14 +2151,14 @@ const { embeddings, usage } = await embedMany({
 The `LangChainAdapter` has been moved to `@ai-sdk/langchain` and the API has been updated to use UI message streams.
 
 ```tsx filename="AI SDK 4.0"
-import { LangChainAdapter } from 'ai';
+import { LangChainAdapter } from "ai";
 
 const response = LangChainAdapter.toDataStreamResponse(stream);
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { toUIMessageStream } from '@ai-sdk/langchain';
-import { createUIMessageStreamResponse } from 'ai';
+import { toUIMessageStream } from "@ai-sdk/langchain";
+import { createUIMessageStreamResponse } from "ai";
 
 const response = createUIMessageStreamResponse({
   stream: toUIMessageStream(stream),
@@ -2171,14 +2174,14 @@ const response = createUIMessageStreamResponse({
 The `LlamaIndexAdapter` has been extracted to a separate package `@ai-sdk/llamaindex` and follows the same UI message stream pattern.
 
 ```tsx filename="AI SDK 4.0"
-import { LlamaIndexAdapter } from 'ai';
+import { LlamaIndexAdapter } from "ai";
 
 const response = LlamaIndexAdapter.toDataStreamResponse(stream);
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { toUIMessageStream } from '@ai-sdk/llamaindex';
-import { createUIMessageStreamResponse } from 'ai';
+import { toUIMessageStream } from "@ai-sdk/llamaindex";
+import { createUIMessageStreamResponse } from "ai";
 
 const response = createUIMessageStreamResponse({
   stream: toUIMessageStream(stream),
@@ -2202,7 +2205,7 @@ The fundamental streaming pattern has changed from single chunks to a three-phas
 ```tsx filename="AI SDK 4.0"
 for await (const chunk of result.fullStream) {
   switch (chunk.type) {
-    case 'text-delta': {
+    case "text-delta": {
       process.stdout.write(chunk.textDelta);
       break;
     }
@@ -2213,17 +2216,17 @@ for await (const chunk of result.fullStream) {
 ```tsx filename="AI SDK 5.0"
 for await (const chunk of result.fullStream) {
   switch (chunk.type) {
-    case 'text-start': {
+    case "text-start": {
       // New: Initialize a text block with unique ID
       console.log(`Starting text block: ${chunk.id}`);
       break;
     }
-    case 'text-delta': {
+    case "text-delta": {
       // Changed: Now includes ID and uses 'delta' property
       process.stdout.write(chunk.delta); // Changed from 'textDelta'
       break;
     }
-    case 'text-end': {
+    case "text-end": {
       // New: Finalize the text block
       console.log(`Completed text block: ${chunk.id}`);
       break;
@@ -2239,9 +2242,9 @@ Reasoning content now follows the same start/delta/end pattern:
 ```tsx filename="AI SDK 4.0"
 for await (const chunk of result.fullStream) {
   switch (chunk.type) {
-    case 'reasoning': {
+    case "reasoning": {
       // Single chunk with full reasoning text
-      console.log('Reasoning:', chunk.text);
+      console.log("Reasoning:", chunk.text);
       break;
     }
   }
@@ -2251,15 +2254,15 @@ for await (const chunk of result.fullStream) {
 ```tsx filename="AI SDK 5.0"
 for await (const chunk of result.fullStream) {
   switch (chunk.type) {
-    case 'reasoning-start': {
+    case "reasoning-start": {
       console.log(`Starting reasoning block: ${chunk.id}`);
       break;
     }
-    case 'reasoning-delta': {
+    case "reasoning-delta": {
       process.stdout.write(chunk.delta);
       break;
     }
-    case 'reasoning-end': {
+    case "reasoning-end": {
       console.log(`Completed reasoning block: ${chunk.id}`);
       break;
     }
@@ -2274,22 +2277,22 @@ Tool inputs can now be streamed as they're being generated:
 ```tsx filename="AI SDK 5.0"
 for await (const chunk of result.fullStream) {
   switch (chunk.type) {
-    case 'tool-input-start': {
+    case "tool-input-start": {
       console.log(`Starting tool input for ${chunk.toolName}: ${chunk.id}`);
       break;
     }
-    case 'tool-input-delta': {
+    case "tool-input-delta": {
       // Stream the JSON input as it's being generated
       process.stdout.write(chunk.delta);
       break;
     }
-    case 'tool-input-end': {
+    case "tool-input-end": {
       console.log(`Completed tool input: ${chunk.id}`);
       break;
     }
-    case 'tool-call': {
+    case "tool-call": {
       // Final tool call with complete input
-      console.log('Tool call:', chunk.toolName, chunk.input);
+      console.log("Tool call:", chunk.toolName, chunk.input);
       break;
     }
   }
@@ -2302,13 +2305,13 @@ The `onChunk` callback now receives the new streaming chunk types with IDs and t
 
 ```tsx filename="AI SDK 4.0"
 const result = streamText({
-  model: openai('gpt-4.1'),
-  prompt: 'Write a story',
+  model: openai("gpt-4.1"),
+  prompt: "Write a story",
   onChunk({ chunk }) {
     switch (chunk.type) {
-      case 'text-delta': {
+      case "text-delta": {
         // Single property with text content
-        console.log('Text delta:', chunk.textDelta);
+        console.log("Text delta:", chunk.textDelta);
         break;
       }
     }
@@ -2318,45 +2321,45 @@ const result = streamText({
 
 ```tsx filename="AI SDK 5.0"
 const result = streamText({
-  model: openai('gpt-4.1'),
-  prompt: 'Write a story',
+  model: openai("gpt-4.1"),
+  prompt: "Write a story",
   onChunk({ chunk }) {
     switch (chunk.type) {
-      case 'text-delta': {
+      case "text-delta": {
         // Text chunks now use single 'text' type
-        console.log('Text chunk:', chunk.text);
+        console.log("Text chunk:", chunk.text);
         break;
       }
-      case 'reasoning': {
+      case "reasoning": {
         // Reasoning chunks use single 'reasoning' type
-        console.log('Reasoning chunk:', chunk.text);
+        console.log("Reasoning chunk:", chunk.text);
         break;
       }
-      case 'source': {
-        console.log('Source chunk:', chunk);
+      case "source": {
+        console.log("Source chunk:", chunk);
         break;
       }
-      case 'tool-call': {
-        console.log('Tool call:', chunk.toolName, chunk.input);
+      case "tool-call": {
+        console.log("Tool call:", chunk.toolName, chunk.input);
         break;
       }
-      case 'tool-input-start': {
+      case "tool-input-start": {
         console.log(
           `Tool input started for ${chunk.toolName}:`,
           chunk.toolCallId,
         );
         break;
       }
-      case 'tool-input-delta': {
+      case "tool-input-delta": {
         console.log(`Tool input delta for ${chunk.toolCallId}:`, chunk.delta);
         break;
       }
-      case 'tool-result': {
-        console.log('Tool result:', chunk.output);
+      case "tool-result": {
+        console.log("Tool result:", chunk.output);
         break;
       }
-      case 'raw': {
-        console.log('Raw chunk:', chunk);
+      case "raw": {
+        console.log("Raw chunk:", chunk);
         break;
       }
     }
@@ -2371,9 +2374,9 @@ File parts in streams have been flattened.
 ```tsx filename="AI SDK 4.0"
 for await (const chunk of result.fullStream) {
   switch (chunk.type) {
-    case 'file': {
-      console.log('Media type:', chunk.file.mediaType);
-      console.log('File data:', chunk.file.data);
+    case "file": {
+      console.log("Media type:", chunk.file.mediaType);
+      console.log("File data:", chunk.file.data);
       break;
     }
   }
@@ -2383,9 +2386,9 @@ for await (const chunk of result.fullStream) {
 ```tsx filename="AI SDK 5.0"
 for await (const chunk of result.fullStream) {
   switch (chunk.type) {
-    case 'file': {
-      console.log('Media type:', chunk.mediaType);
-      console.log('File data:', chunk.data);
+    case "file": {
+      console.log("Media type:", chunk.mediaType);
+      console.log("File data:", chunk.data);
       break;
     }
   }
@@ -2398,20 +2401,20 @@ Source stream parts have been flattened.
 
 ```tsx filename="AI SDK 4.0"
 for await (const part of result.fullStream) {
-  if (part.type === 'source' && part.source.sourceType === 'url') {
-    console.log('ID:', part.source.id);
-    console.log('Title:', part.source.title);
-    console.log('URL:', part.source.url);
+  if (part.type === "source" && part.source.sourceType === "url") {
+    console.log("ID:", part.source.id);
+    console.log("Title:", part.source.title);
+    console.log("URL:", part.source.url);
   }
 }
 ```
 
 ```tsx filename="AI SDK 5.0"
 for await (const part of result.fullStream) {
-  if (part.type === 'source' && part.sourceType === 'url') {
-    console.log('ID:', part.id);
-    console.log('Title:', part.title);
-    console.log('URL:', part.url);
+  if (part.type === "source" && part.sourceType === "url") {
+    console.log("ID:", part.id);
+    console.log("Title:", part.title);
+    console.log("URL:", part.url);
   }
 }
 ```
@@ -2423,12 +2426,12 @@ Stream finish events have been renamed for consistency.
 ```tsx filename="AI SDK 4.0"
 for await (const part of result.fullStream) {
   switch (part.type) {
-    case 'step-finish': {
-      console.log('Step finished:', part.finishReason);
+    case "step-finish": {
+      console.log("Step finished:", part.finishReason);
       break;
     }
-    case 'finish': {
-      console.log('Usage:', part.usage);
+    case "finish": {
+      console.log("Usage:", part.usage);
       break;
     }
   }
@@ -2438,13 +2441,13 @@ for await (const part of result.fullStream) {
 ```tsx filename="AI SDK 5.0"
 for await (const part of result.fullStream) {
   switch (part.type) {
-    case 'finish-step': {
+    case "finish-step": {
       // Renamed from 'step-finish'
-      console.log('Step finished:', part.finishReason);
+      console.log("Step finished:", part.finishReason);
       break;
     }
-    case 'finish': {
-      console.log('Total Usage:', part.totalUsage); // Changed from 'usage'
+    case "finish": {
+      console.log("Total Usage:", part.totalUsage); // Changed from 'usage'
       break;
     }
   }
@@ -2458,37 +2461,37 @@ for await (const part of result.fullStream) {
 The data stream protocol has been updated to use Server-Sent Events.
 
 ```tsx filename="AI SDK 4.0"
-import { createDataStream, formatDataStreamPart } from 'ai';
+import { createDataStream, formatDataStreamPart } from "ai";
 
 const dataStream = createDataStream({
-  execute: writer => {
-    writer.writeData('initialized call');
-    writer.write(formatDataStreamPart('text', 'Hello'));
+  execute: (writer) => {
+    writer.writeData("initialized call");
+    writer.write(formatDataStreamPart("text", "Hello"));
     writer.writeSource({
-      type: 'source',
-      sourceType: 'url',
-      id: 'source-1',
-      url: 'https://example.com',
-      title: 'Example Source',
+      type: "source",
+      sourceType: "url",
+      id: "source-1",
+      url: "https://example.com",
+      title: "Example Source",
     });
   },
 });
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { createUIMessageStream } from 'ai';
+import { createUIMessageStream } from "ai";
 
 const stream = createUIMessageStream({
   execute: ({ writer }) => {
-    writer.write({ type: 'data', value: ['initialized call'] });
-    writer.write({ type: 'text', value: 'Hello' });
+    writer.write({ type: "data", value: ["initialized call"] });
+    writer.write({ type: "text", value: "Hello" });
     writer.write({
-      type: 'source-url',
+      type: "source-url",
       value: {
-        type: 'source',
-        id: 'source-1',
-        url: 'https://example.com',
-        title: 'Example Source',
+        type: "source",
+        id: "source-1",
+        url: "https://example.com",
+        title: "Example Source",
       },
     });
   },
@@ -2501,10 +2504,10 @@ The streaming API has been completely restructured from data streams to UI messa
 
 ```tsx filename="AI SDK 4.0"
 // Express/Node.js servers
-app.post('/stream', async (req, res) => {
+app.post("/stream", async (req, res) => {
   const result = streamText({
-    model: openai('gpt-4.1'),
-    prompt: 'Generate content',
+    model: openai("gpt-4.1"),
+    prompt: "Generate content",
   });
 
   result.pipeDataStreamToResponse(res);
@@ -2512,8 +2515,8 @@ app.post('/stream', async (req, res) => {
 
 // Next.js API routes
 const result = streamText({
-  model: openai('gpt-4.1'),
-  prompt: 'Generate content',
+  model: openai("gpt-4.1"),
+  prompt: "Generate content",
 });
 
 return result.toDataStreamResponse();
@@ -2521,10 +2524,10 @@ return result.toDataStreamResponse();
 
 ```tsx filename="AI SDK 5.0"
 // Express/Node.js servers
-app.post('/stream', async (req, res) => {
+app.post("/stream", async (req, res) => {
   const result = streamText({
-    model: openai('gpt-4.1'),
-    prompt: 'Generate content',
+    model: openai("gpt-4.1"),
+    prompt: "Generate content",
   });
 
   result.pipeUIMessageStreamToResponse(res);
@@ -2532,8 +2535,8 @@ app.post('/stream', async (req, res) => {
 
 // Next.js API routes
 const result = streamText({
-  model: openai('gpt-4.1'),
-  prompt: 'Generate content',
+  model: openai("gpt-4.1"),
+  prompt: "Generate content",
 });
 
 return result.toUIMessageStreamResponse();
@@ -2544,11 +2547,11 @@ return result.toUIMessageStreamResponse();
 Various stream-related functions have been renamed for consistency.
 
 ```tsx filename="AI SDK 4.0"
-import { DataStreamToSSETransformStream } from 'ai';
+import { DataStreamToSSETransformStream } from "ai";
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { JsonToSseTransformStream } from 'ai';
+import { JsonToSseTransformStream } from "ai";
 ```
 
 #### Error Handling: getErrorMessage → onError
@@ -2559,12 +2562,12 @@ By default, error messages are NOT sent to the client to prevent leaking sensiti
 
 ```tsx filename="AI SDK 4.0"
 return result.toDataStreamResponse({
-  getErrorMessage: error => {
+  getErrorMessage: (error) => {
     // Return sanitized error data to send to client
     // Only return what you want the client to see!
     return {
-      errorCode: 'STREAM_ERROR',
-      message: 'An error occurred while processing your request',
+      errorCode: "STREAM_ERROR",
+      message: "An error occurred while processing your request",
       // In production, avoid sending error.message directly to prevent information leakage
     };
   },
@@ -2573,12 +2576,12 @@ return result.toDataStreamResponse({
 
 ```tsx filename="AI SDK 5.0"
 return result.toUIMessageStreamResponse({
-  onError: error => {
+  onError: (error) => {
     // Return sanitized error data to send to client
     // Only return what you want the client to see!
     return {
-      errorCode: 'STREAM_ERROR',
-      message: 'An error occurred while processing your request',
+      errorCode: "STREAM_ERROR",
+      message: "An error occurred while processing your request",
       // In production, avoid sending error.message directly to prevent information leakage
     };
   },
@@ -2592,12 +2595,12 @@ return result.toUIMessageStreamResponse({
 The `createIdGenerator()` function now requires a `size` argument.
 
 ```tsx filename="AI SDK 4.0"
-const generator = createIdGenerator({ prefix: 'msg' });
+const generator = createIdGenerator({ prefix: "msg" });
 const id = generator(16); // Custom size at call time
 ```
 
 ```tsx filename="AI SDK 5.0"
-const generator = createIdGenerator({ prefix: 'msg', size: 16 });
+const generator = createIdGenerator({ prefix: "msg", size: 16 });
 const id = generator(); // Fixed size from creation
 ```
 
@@ -2606,11 +2609,11 @@ const id = generator(); // Fixed size from creation
 The type name has been updated.
 
 ```tsx filename="AI SDK 4.0"
-import { IDGenerator } from 'ai';
+import { IDGenerator } from "ai";
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { IdGenerator } from 'ai';
+import { IdGenerator } from "ai";
 ```
 
 ### Provider Interface Changes
@@ -2620,11 +2623,11 @@ import { IdGenerator } from 'ai';
 `LanguageModelV3` must now be imported from `@ai-sdk/provider`.
 
 ```tsx filename="AI SDK 4.0"
-import { LanguageModelV3 } from 'ai';
+import { LanguageModelV3 } from "ai";
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { LanguageModelV3 } from '@ai-sdk/provider';
+import { LanguageModelV3 } from "@ai-sdk/provider";
 ```
 
 #### Middleware Rename
@@ -2632,11 +2635,11 @@ import { LanguageModelV3 } from '@ai-sdk/provider';
 `LanguageModelV1Middleware` has been renamed and moved.
 
 ```tsx filename="AI SDK 4.0"
-import { LanguageModelV1Middleware } from 'ai';
+import { LanguageModelV1Middleware } from "ai";
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { LanguageModelV3Middleware } from '@ai-sdk/provider';
+import { LanguageModelV3Middleware } from "@ai-sdk/provider";
 ```
 
 #### Usage Token Properties
@@ -2671,9 +2674,9 @@ The `LanguageModelV3StreamPart` type has been expanded to support the new stream
 ```tsx filename="AI SDK 4.0"
 // V4: Simple stream parts
 type LanguageModelV3StreamPart =
-  | { type: 'text-delta'; textDelta: string }
-  | { type: 'reasoning'; text: string }
-  | { type: 'tool-call'; toolCallId: string; toolName: string; input: string };
+  | { type: "text-delta"; textDelta: string }
+  | { type: "reasoning"; text: string }
+  | { type: "tool-call"; toolCallId: string; toolName: string; input: string };
 ```
 
 ```tsx filename="AI SDK 5.0"
@@ -2681,62 +2684,62 @@ type LanguageModelV3StreamPart =
 type LanguageModelV3StreamPart =
   // Text blocks with start/delta/end pattern
   | {
-      type: 'text-start';
+      type: "text-start";
       id: string;
       providerMetadata?: SharedV2ProviderMetadata;
     }
   | {
-      type: 'text-delta';
+      type: "text-delta";
       id: string;
       delta: string;
       providerMetadata?: SharedV2ProviderMetadata;
     }
   | {
-      type: 'text-end';
+      type: "text-end";
       id: string;
       providerMetadata?: SharedV2ProviderMetadata;
     }
 
   // Reasoning blocks with start/delta/end pattern
   | {
-      type: 'reasoning-start';
+      type: "reasoning-start";
       id: string;
       providerMetadata?: SharedV2ProviderMetadata;
     }
   | {
-      type: 'reasoning-delta';
+      type: "reasoning-delta";
       id: string;
       delta: string;
       providerMetadata?: SharedV2ProviderMetadata;
     }
   | {
-      type: 'reasoning-end';
+      type: "reasoning-end";
       id: string;
       providerMetadata?: SharedV2ProviderMetadata;
     }
 
   // Tool input streaming
   | {
-      type: 'tool-input-start';
+      type: "tool-input-start";
       id: string;
       toolName: string;
       providerMetadata?: SharedV2ProviderMetadata;
     }
   | {
-      type: 'tool-input-delta';
+      type: "tool-input-delta";
       id: string;
       delta: string;
       providerMetadata?: SharedV2ProviderMetadata;
     }
   | {
-      type: 'tool-input-end';
+      type: "tool-input-end";
       id: string;
       providerMetadata?: SharedV2ProviderMetadata;
     }
 
   // Enhanced tool calls
   | {
-      type: 'tool-call';
+      type: "tool-call";
       toolCallId: string;
       toolName: string;
       input: string;
@@ -2744,9 +2747,9 @@ type LanguageModelV3StreamPart =
     }
 
   // Stream lifecycle events
-  | { type: 'stream-start'; warnings: Array<LanguageModelV3CallWarning> }
+  | { type: "stream-start"; warnings: Array<LanguageModelV3CallWarning> }
   | {
-      type: 'finish';
+      type: "finish";
       usage: LanguageModelV3Usage;
       finishReason: LanguageModelV3FinishReason;
       providerMetadata?: SharedV2ProviderMetadata;
@@ -2778,30 +2781,30 @@ Provider response objects have been updated.
 #### `wrapLanguageModel` now stable
 
 ```tsx filename="AI SDK 4.0"
-import { experimental_wrapLanguageModel } from 'ai';
+import { experimental_wrapLanguageModel } from "ai";
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { wrapLanguageModel } from 'ai';
+import { wrapLanguageModel } from "ai";
 ```
 
 #### `activeTools` No Longer Experimental
 
 ```tsx filename="AI SDK 4.0"
 const result = await generateText({
-  model: openai('gpt-4'),
+  model: openai("gpt-4"),
   messages,
   tools: { weatherTool, locationTool },
-  experimental_activeTools: ['weatherTool'],
+  experimental_activeTools: ["weatherTool"],
 });
 ```
 
 ```tsx filename="AI SDK 5.0"
 const result = await generateText({
-  model: openai('gpt-4'),
+  model: openai("gpt-4"),
   messages,
   tools: { weatherTool, locationTool },
-  activeTools: ['weatherTool'], // No longer experimental
+  activeTools: ["weatherTool"], // No longer experimental
 });
 ```
 
@@ -2811,14 +2814,14 @@ The `experimental_prepareStep` option has been promoted and no longer requires t
 
 ```tsx filename="AI SDK 4.0"
 const result = await generateText({
-  model: openai('gpt-4'),
+  model: openai("gpt-4"),
   messages,
   tools: { weatherTool, locationTool },
   experimental_prepareStep: ({ steps, stepNumber, model }) => {
-    console.log('Preparing step:', stepNumber);
+    console.log("Preparing step:", stepNumber);
     return {
-      activeTools: ['weatherTool'],
-      system: 'Be helpful and concise.',
+      activeTools: ["weatherTool"],
+      system: "Be helpful and concise.",
     };
   },
 });
@@ -2826,14 +2829,14 @@ const result = await generateText({
 
 ```tsx filename="AI SDK 5.0"
 const result = await generateText({
-  model: openai('gpt-4'),
+  model: openai("gpt-4"),
   messages,
   tools: { weatherTool, locationTool },
   prepareStep: ({ steps, stepNumber, model }) => {
-    console.log('Preparing step:', stepNumber);
+    console.log("Preparing step:", stepNumber);
     return {
-      activeTools: ['weatherTool'],
-      system: 'Be helpful and concise.',
+      activeTools: ["weatherTool"],
+      system: "Be helpful and concise.",
       // Can also configure toolChoice, model, etc.
     };
   },
@@ -2854,16 +2857,16 @@ Temperature is no longer set to `0` by default.
 
 ```tsx filename="AI SDK 4.0"
 await generateText({
-  model: openai('gpt-4'),
-  prompt: 'Write a creative story',
+  model: openai("gpt-4"),
+  prompt: "Write a creative story",
   // Implicitly temperature: 0
 });
 ```
 
 ```tsx filename="AI SDK 5.0"
 await generateText({
-  model: openai('gpt-4'),
-  prompt: 'Write a creative story',
+  model: openai("gpt-4"),
+  prompt: "Write a creative story",
   temperature: 0, // Must explicitly set
 });
 ```
@@ -2884,8 +2887,8 @@ import {
   convertToModelMessages,
   appendClientMessage,
   appendResponseMessages,
-} from 'ai';
-import { openai } from '@ai-sdk/openai';
+} from "ai";
+import { openai } from "@ai-sdk/openai";
 
 const updatedMessages = appendClientMessage({
   messages,
@@ -2893,7 +2896,7 @@ const updatedMessages = appendClientMessage({
 });
 
 const result = streamText({
-  model: openai('gpt-4o'),
+  model: openai("gpt-4o"),
   messages: updatedMessages,
   experimental_generateMessageId: () => generateId(), // ID generation on streamText
   onFinish: async ({ responseMessages, usage }) => {
@@ -2912,15 +2915,15 @@ const result = streamText({
 In v5, message persistence is now handled through the `toUIMessageStreamResponse` method, which automatically formats response messages in the `UIMessage` format:
 
 ```tsx filename="AI SDK 5.0"
-import { streamText, convertToModelMessages, UIMessage } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { streamText, convertToModelMessages, UIMessage } from "ai";
+import { openai } from "@ai-sdk/openai";
 
 const messages: UIMessage[] = [
   // Your existing messages in UIMessage format
 ];
 
 const result = streamText({
-  model: openai('gpt-4o'),
+  model: openai("gpt-4o"),
   messages: convertToModelMessages(messages),
   // experimental_generateMessageId removed from here
 });
@@ -2952,7 +2955,7 @@ The `experimental_generateMessageId` option has been moved from `streamText` con
 
 ```tsx filename="AI SDK 4.0"
 const result = streamText({
-  model: openai('gpt-4o'),
+  model: openai("gpt-4o"),
   messages,
   experimental_generateMessageId: () => generateId(),
 });
@@ -2960,7 +2963,7 @@ const result = streamText({
 
 ```tsx filename="AI SDK 5.0"
 const result = streamText({
-  model: openai('gpt-4o'),
+  model: openai("gpt-4o"),
   messages: convertToModelMessages(messages),
 });
 
@@ -2983,8 +2986,8 @@ import {
   streamText,
   convertToModelMessages,
   UIMessage,
-} from 'ai';
-import { openai } from '@ai-sdk/openai';
+} from "ai";
+import { openai } from "@ai-sdk/openai";
 
 const stream = createUIMessageStream({
   originalMessages: messages,
@@ -2992,13 +2995,13 @@ const stream = createUIMessageStream({
   execute: ({ writer }) => {
     // Write custom data parts
     writer.write({
-      type: 'data',
-      data: { status: 'processing', timestamp: Date.now() },
+      type: "data",
+      data: { status: "processing", timestamp: Date.now() },
     });
 
     // Stream the AI response
     const result = streamText({
-      model: openai('gpt-4o'),
+      model: openai("gpt-4o"),
       messages: convertToModelMessages(messages),
     });
 
@@ -3017,29 +3020,101 @@ return createUIMessageStreamResponse({ stream });
 
 ### OpenAI
 
-#### Structured Outputs
+#### Default Provider Instance Uses Responses API
 
-The `structuredOutputs` parameter has been replaced with the `strictJsonSchema` provider option. It is now disabled by default.
+In AI SDK 5, the default OpenAI provider instance uses the Responses API, while AI SDK 4 used the Chat Completions API. The Chat Completions API remains fully supported and you can use it with `openai.chat(...)`.
 
 ```tsx filename="AI SDK 4.0"
-import { openai } from '@ai-sdk/openai';
+import { openai } from "@ai-sdk/openai";
+
+const defaultModel = openai("gpt-4.1-mini"); // Chat Completions API
+```
+
+```tsx filename="AI SDK 5.0"
+import { openai } from "@ai-sdk/openai";
+
+const defaultModel = openai("gpt-4.1-mini"); // Responses API
+
+// Specify a specific API when needed:
+const chatCompletionsModel = openai.chat("gpt-4.1-mini");
+const responsesModel = openai.responses("gpt-4.1-mini");
+```
+
+<Note>
+  The Responses and Chat Completions APIs have different behavior and defaults.
+  If you depend on the Chat Completions API, switch your model instance to
+  `openai.chat(...)` and audit your configuration.
+</Note>
+
+#### Strict Schemas (`strictSchemas`) with Responses API
+
+In AI SDK 4.0, you could set the `strictSchemas` option on Responses models (which defaulted to `true`). This option has been renamed to `strictJsonSchema` in AI SDK 5.0 and now defaults to `false`.
+
+```tsx filename="AI SDK 4.0"
+import { z } from "zod";
+import { generateObject } from "ai";
+import { openai, type OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
 
 const result = await generateObject({
-  model: openai('gpt-4.1-2024-08-06', { structuredOutputs: true }),
-  schema: z.object({ name: z.string() }),
+  model: openai.responses("gpt-4.1"),
+  schema: z.object({
+    // ...
+  }),
+  providerOptions: {
+    openai: {
+      strictSchemas: true, // default behaviour in AI SDK 4
+    } satisfies OpenAIResponsesProviderOptions,
+  },
 });
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { openai, type OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
+import { z } from "zod";
+import { generateObject } from "ai";
+import { openai, type OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
 
 const result = await generateObject({
-  model: openai('gpt-4.1-2024-08-06'),
+  model: openai("gpt-4.1-2024"), // uses Responses API
+  schema: z.object({
+    // ...
+  }),
+  providerOptions: {
+    openai: {
+      strictJsonSchema: true, // defaults to false, opt back in to the AI SDK 4 strict behaviour
+    } satisfies OpenAIResponsesProviderOptions,
+  },
+});
+```
+
+If you call `openai.chat(...)` to use the Chat Completions API directly, you can type it with `OpenAIChatLanguageModelOptions`. AI SDK 5 adds the same `strictJsonSchema` option there as well.
+
+#### Structured Outputs
+
+The `structuredOutputs` option is now configured using provider options rather than as a setting on the model instance.
+
+```tsx filename="AI SDK 4.0"
+import { z } from "zod";
+import { generateObject } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+const result = await generateObject({
+  model: openai("gpt-4.1", { structuredOutputs: true }), // use Chat Completions API
+  schema: z.object({ name: z.string() }),
+});
+```
+
+```tsx filename="AI SDK 5.0 (Chat Completions API)"
+import { z } from "zod";
+import { generateObject } from "ai";
+import { openai, type OpenAIChatLanguageModelOptions } from "@ai-sdk/openai";
+
+const result = await generateObject({
+  model: openai.chat("gpt-4.1"), // use Chat Completions API
   schema: z.object({ name: z.string() }),
   providerOptions: {
     openai: {
-      strictJsonSchema: true, // renamed and opt-in via provider options
-    } satisfies OpenAIResponsesProviderOptions,
+      structuredOutputs: true,
+    } satisfies OpenAIChatLanguageModelOptions,
   },
 });
 ```
@@ -3050,7 +3125,7 @@ The `compatibility` option has been removed; strict compatibility mode is now th
 
 ```tsx filename="AI SDK 4.0"
 const openai = createOpenAI({
-  compatibility: 'strict',
+  compatibility: "strict",
 });
 ```
 
@@ -3066,13 +3141,13 @@ The `useLegacyFunctionCalls` option has been removed.
 
 ```tsx filename="AI SDK 4.0"
 const result = streamText({
-  model: openai('gpt-4.1', { useLegacyFunctionCalls: true }),
+  model: openai("gpt-4.1", { useLegacyFunctionCalls: true }),
 });
 ```
 
 ```tsx filename="AI SDK 5.0"
 const result = streamText({
-  model: openai('gpt-4.1'),
+  model: openai("gpt-4.1"),
 });
 ```
 
@@ -3082,22 +3157,22 @@ The `simulateStreaming` model option has been replaced with middleware.
 
 ```tsx filename="AI SDK 4.0"
 const result = generateText({
-  model: openai('gpt-4.1', { simulateStreaming: true }),
-  prompt: 'Hello, world!',
+  model: openai("gpt-4.1", { simulateStreaming: true }),
+  prompt: "Hello, world!",
 });
 ```
 
 ```tsx filename="AI SDK 5.0"
-import { simulateStreamingMiddleware, wrapLanguageModel } from 'ai';
+import { simulateStreamingMiddleware, wrapLanguageModel } from "ai";
 
 const model = wrapLanguageModel({
-  model: openai('gpt-4.1'),
+  model: openai("gpt-4.1"),
   middleware: simulateStreamingMiddleware(),
 });
 
 const result = generateText({
   model,
-  prompt: 'Hello, world!',
+  prompt: "Hello, world!",
 });
 ```
 
@@ -3109,10 +3184,10 @@ Search Grounding is now called "Google Search" and is now a provider defined too
 
 ```tsx filename="AI SDK 4.0"
 const { text, providerMetadata } = await generateText({
-  model: google('gemini-1.5-pro', {
+  model: google("gemini-1.5-pro", {
     useSearchGrounding: true,
   }),
-  prompt: 'List the top 5 San Francisco news from the past week.',
+  prompt: "List the top 5 San Francisco news from the past week.",
 });
 ```
 
@@ -3136,8 +3211,8 @@ Provider options have been updated to use camelCase.
 
 ```tsx filename="AI SDK 4.0"
 const result = await generateText({
-  model: bedrock('amazon.titan-tg1-large'),
-  prompt: 'Hello, world!',
+  model: bedrock("amazon.titan-tg1-large"),
+  prompt: "Hello, world!",
   providerOptions: {
     bedrock: {
       reasoning_config: {
@@ -3150,8 +3225,8 @@ const result = await generateText({
 
 ```tsx filename="AI SDK 5.0"
 const result = await generateText({
-  model: bedrock('amazon.titan-tg1-large'),
-  prompt: 'Hello, world!',
+  model: bedrock("amazon.titan-tg1-large"),
+  prompt: "Hello, world!",
   providerOptions: {
     bedrock: {
       reasoningConfig: {
@@ -3173,7 +3248,7 @@ import {
   CoreToolResultUnion,
   CoreToolCallUnion,
   CoreToolChoice,
-} from '@ai-sdk/provider-utils';
+} from "@ai-sdk/provider-utils";
 ```
 
 ```tsx filename="AI SDK 5.0"
@@ -3183,7 +3258,7 @@ import {
   TypedToolResult,
   TypedToolCall,
   ToolChoice,
-} from '@ai-sdk/provider-utils';
+} from "@ai-sdk/provider-utils";
 ```
 
 ## Troubleshooting
@@ -3282,12 +3357,12 @@ The chunk types in `fullStream` have been renamed for consistency with UI stream
 ```tsx filename="AI SDK 5.0 (before beta.26)"
 for await (const chunk of result.fullStream) {
   switch (chunk.type) {
-    case 'text-delta': {
+    case "text-delta": {
       process.stdout.write(chunk.text);
       break;
     }
-    case 'reasoning': {
-      console.log('Reasoning:', chunk.text);
+    case "reasoning": {
+      console.log("Reasoning:", chunk.text);
       break;
     }
   }
@@ -3297,12 +3372,12 @@ for await (const chunk of result.fullStream) {
 ```tsx filename="AI SDK 5.0 (beta.26 and later)"
 for await (const chunk of result.fullStream) {
   switch (chunk.type) {
-    case 'text-delta': {
+    case "text-delta": {
       process.stdout.write(chunk.text);
       break;
     }
-    case 'reasoning-delta': {
-      console.log('Reasoning:', chunk.text);
+    case "reasoning-delta": {
+      console.log("Reasoning:", chunk.text);
       break;
     }
   }
